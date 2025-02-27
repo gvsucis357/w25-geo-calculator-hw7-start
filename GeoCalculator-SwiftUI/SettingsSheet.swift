@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingsSheet: View {
     @Binding var settingsSheetShown: Bool
-    @ObservedObject var settings: SettingsViewModel
+    @EnvironmentObject var settings: SettingsViewModel
     
     let distUnitStrs: [String] = DistanceUnits.allCases.map { $0.rawValue }
     let bearingUnitStrs: [String] = BearingUnits.allCases.map { $0.rawValue }
@@ -19,8 +19,8 @@ struct SettingsSheet: View {
         VStack {
             Text("Settings")
                 .font(.title)
-            SettingsView(settingsName: "Distance Units", values: distUnitStrs, settings: settings)
-            SettingsView(settingsName: "Bearing Units", values: bearingUnitStrs, settings: settings )
+            SettingsView(settingsName: "Distance Units", values: distUnitStrs)
+            SettingsView(settingsName: "Bearing Units", values: bearingUnitStrs)
             Spacer()
             Button("Dismiss") {
                 settingsSheetShown = false
@@ -31,6 +31,6 @@ struct SettingsSheet: View {
 
 #Preview {
     @Previewable @State var settingsSheetShown: Bool = true
-    @Previewable @StateObject var settings = SettingsViewModel()
-    SettingsSheet(settingsSheetShown: $settingsSheetShown, settings: settings)
+    SettingsSheet(settingsSheetShown: $settingsSheetShown)
+        .environmentObject(SettingsViewModel())
 }

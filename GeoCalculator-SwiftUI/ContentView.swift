@@ -9,7 +9,7 @@ import SwiftUI
 import CoreLocation
 
 struct ContentView: View {
-    @StateObject var settings = SettingsViewModel()
+    @EnvironmentObject var settings: SettingsViewModel
     @State private var settingsSheetShown = false
     let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -134,7 +134,7 @@ struct ContentView: View {
             focusedField = nil
             doCalculatations()
         } content: {
-            SettingsSheet(settingsSheetShown: $settingsSheetShown, settings: settings)
+            SettingsSheet(settingsSheetShown: $settingsSheetShown)
         }
     }
 
@@ -167,6 +167,7 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(SettingsViewModel())
 }
 
 

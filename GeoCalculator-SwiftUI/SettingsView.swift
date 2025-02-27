@@ -12,12 +12,11 @@ struct SettingsView: View {
     var settingsName: String
     var values : [String]
     @State var selectedValue: String? = "Miles"
-    @ObservedObject var settings: SettingsViewModel
+    @EnvironmentObject var settings: SettingsViewModel
     
-    init(settingsName:String, values: [String], settings: SettingsViewModel) {
+    init(settingsName:String, values: [String]) {
         self.settingsName = settingsName
         self.values = values
-        self.settings = settings
     }
     
     var body: some View {
@@ -30,7 +29,7 @@ struct SettingsView: View {
             .padding()
             List {
                 ForEach(values, id: \.self) { item in
-                    SelectionCell(value: item, settings: settings)
+                    SelectionCell(value: item)
                 }
             }
         }
@@ -39,44 +38,10 @@ struct SettingsView: View {
     }
 }
 
-struct SelectionCell: View {
-    
-    let value: String
-    @ObservedObject var settings: SettingsViewModel
-//    @Binding var selectedValue: String?
-    
-    var body: some View {
-        ZStack {
-            Color.white.opacity(0.0000001)
-            HStack {
-                Text(value)
-                Spacer()
-                if value == settings.bearingUnits.rawValue || value == settings.distanceUnits.rawValue {
-                    Image(systemName: "checkmark")
-                        .foregroundColor(.accentColor)
-                }
-            }
-        }
-        .onTapGesture {
-//            self.selectedValue = self.value
-            switch(value) {
-            case "Miles":
-                settings.distanceUnits = .miles
-            case "Kilometers":
-                settings.distanceUnits = .kilometers
-            case "Degrees":
-                settings.bearingUnits = .degrees
-            case "Mils":
-                settings.bearingUnits = .mils
-            default:
-                print("bad val")
-            }
-        }
-        
-    }
-}
+
 
 #Preview {
     @Previewable @StateObject var settings = SettingsViewModel()
-    SettingsView( settingsName: "Distance Units", values: ["Miles", "Kilometers"], settings: settings)
+    SettingsView( settingsName: "Distance Units", values: ["Miles", "Kilometers"])
+        .environmentObject(SettingsViewModel())
 }
