@@ -9,6 +9,8 @@ import SwiftUI
 import CoreLocation
 
 struct ContentView: View {
+    @StateObject var settings = SettingsViewModel()
+    @State private var settingsSheetShown = false
     let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -46,6 +48,7 @@ struct ContentView: View {
                 HStack {
                     Button("Calculate") {
                         doCalculatations()
+                        focusedField = nil
                     }
                     .disabled(lat1?.isNaN ?? true || lng1?.isNaN ?? true || lat2?.isNaN ?? true || lng2?.isNaN ?? true)
                     Spacer()
@@ -55,6 +58,8 @@ struct ContentView: View {
                         lng1 = nil
                         lng2 = nil
                         focusedField = nil
+                        distanceStr = ""
+                        bearingStr = ""
                     }
                     
                 }
@@ -71,6 +76,9 @@ struct ContentView: View {
                     Spacer()
                 }
                 Spacer()
+                Button("Settings") {
+                    settingsSheetShown = true
+                }
             }
             .textFieldStyle(SignedDecimalFieldStyle())
             .toolbar {
@@ -122,7 +130,12 @@ struct ContentView: View {
             print("Tap")
             focusedField = nil
         }
-        
+        .sheet(isPresented: $settingsSheetShown) {
+            focusedField = nil
+            doCalculatations()
+        } content: {
+            SettingsSheet(settingsSheetShown: $settingsSheetShown, settings: settings)
+        }
     }
 
     func doCalculatations()
@@ -134,11 +147,20 @@ struct ContentView: View {
         let p1 = CLLocation(latitude: p1lt, longitude: p1ln)
         let p2 = CLLocation(latitude: p2lt, longitude: p2ln)
         
-        let distance = p1.distance(from: p2) / 10.0
-        distanceStr = "Distance: \(distance.rounded() / 100.0) kilometers"
+        var distance = p1.distance(from: p2) / 10.0
         
-        let bearing = (p1.bearingToPoint(point: p2) * 100.0).rounded() / 100.0
-        bearingStr = "Bearing: \(bearing) degrees"
+        if settings.distanceUnits == .miles {
+            distance = (distance * 0.621371).roundedToTwoDecimals()
+        }
+        
+        distanceStr = "Distance: \(distance.rounded() / 100.0) \(settings.distanceUnits.rawValue)"
+        
+        var bearing = (p1.bearingToPoint(point: p2) * 100.0).rounded() / 100.0
+        
+        if settings.bearingUnits == .mils {
+            bearing = (bearing * 17.78).roundedToTwoDecimals()
+        }
+        bearingStr = "Bearing: \(bearing) \(settings.bearingUnits.rawValue)"
         
     }
 }
@@ -148,3 +170,8 @@ struct ContentView: View {
 }
 
 
+extension Double {
+    func roundedToTwoDecimals() -> Double {
+        return (self * 100).rounded() / 100
+    }
+}
