@@ -10,7 +10,7 @@ import CoreLocation
 
 struct ContentView: View {
     @EnvironmentObject var settings: SettingsViewModel
-    @State private var settingsSheetShown = false
+    @EnvironmentObject var history: HistoryViewModel
     let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -29,116 +29,132 @@ struct ContentView: View {
     @State private var bearingStr = ""
     @FocusState private var focusedField: FocusedField?
     var body: some View {
-        ZStack {
-            Color.white.opacity(0.0000001)
-            VStack {
-                HStack {
-                    TextField("Enter latitude", value: $lat1, formatter: numberFormatter)
-                        .focused($focusedField, equals: .lat1)
-                    TextField("Enter longitude", value: $lng1, formatter: numberFormatter)
-                        .focused($focusedField, equals: .lng1)
-                }
-                
-                HStack {
-                    TextField("Enter latitude", value: $lat2, formatter: numberFormatter)
-                        .focused($focusedField, equals: .lat2)
-                    TextField("Enter longitude", value: $lng2, formatter: numberFormatter)
-                        .focused($focusedField, equals: .lng2)
-                }
-                HStack {
-                    Button("Calculate") {
-                        doCalculatations()
-                        focusedField = nil
-                    }
-                    .disabled(lat1?.isNaN ?? true || lng1?.isNaN ?? true || lat2?.isNaN ?? true || lng2?.isNaN ?? true)
-                    Spacer()
-                    Button("Clear") {
-                        lat1 = nil
-                        lat2 = nil
-                        lng1 = nil
-                        lng2 = nil
-                        focusedField = nil
-                        distanceStr = ""
-                        bearingStr = ""
+        NavigationStack() {
+            ZStack {
+                Color.white.opacity(0.0000001)
+                VStack {
+                    HStack {
+                        TextField("Enter latitude", value: $lat1, formatter: numberFormatter)
+                            .focused($focusedField, equals: .lat1)
+                        TextField("Enter longitude", value: $lng1, formatter: numberFormatter)
+                            .focused($focusedField, equals: .lng1)
                     }
                     
-                }
-                Spacer()
-                    .frame(height: 20)
-                HStack {
-                    Text(distanceStr)
-                        .fontWeight(.bold)
-                    Spacer()
-                }
-                HStack{
-                    Text(bearingStr)
-                        .fontWeight(.bold)
-                    Spacer()
-                }
-                Spacer()
-                Button("Settings") {
-                    settingsSheetShown = true
-                }
-            }
-            .textFieldStyle(SignedDecimalFieldStyle())
-            .toolbar {
-                ToolbarItem(placement: .keyboard) {
-                    
-                    // minus toggle button
-                    Button {
-                        switch(focusedField) {
-                        case .lat1:
-                            if let l = lat1 {
-                                lat1 = l * -1
-                            }
-                        case .lng1:
-                            if let l = lng1 {
-                                lng1 = l * -1
-                            }
-                        case .lat2:
-                            if let l = lat2 {
-                                lat2 = l * -1
-                            }
-                        case .lng2:
-                            if let l = lng2 {
-                                lng2 = l * -1
-                            }
-                        default:
-                            break
+                    HStack {
+                        TextField("Enter latitude", value: $lat2, formatter: numberFormatter)
+                            .focused($focusedField, equals: .lat2)
+                        TextField("Enter longitude", value: $lng2, formatter: numberFormatter)
+                            .focused($focusedField, equals: .lng2)
+                    }
+                    HStack {
+                        Button("Calculate") {
+                            doCalculations()
+                            focusedField = nil
+                        }
+                        .disabled(lat1?.isNaN ?? true || lng1?.isNaN ?? true || lat2?.isNaN ?? true || lng2?.isNaN ?? true)
+                        Spacer()
+                        Button("Clear") {
+                            lat1 = nil
+                            lat2 = nil
+                            lng1 = nil
+                            lng2 = nil
+                            focusedField = nil
+                            distanceStr = ""
+                            bearingStr = ""
                         }
                         
-                    } label: {
-                        Image(systemName: "minus.square")
                     }
-                }
-                ToolbarItem(placement: .keyboard) {
+                    Spacer()
+                        .frame(height: 20)
+                    HStack {
+                        Text(distanceStr)
+                            .fontWeight(.bold)
+                        Spacer()
+                    }
+                    HStack{
+                        Text(bearingStr)
+                            .fontWeight(.bold)
+                        Spacer()
+                    }
                     Spacer()
                 }
-                ToolbarItem(placement: .keyboard) {
-                    
-                    // keyboard dismiss button
-                    Button {
-                        focusedField = nil
-                    } label: {
-                        Image(systemName: "keyboard.chevron.compact.down")
+                .onAppear() {
+                    if let calc = history.selected {
+                        lat1 = calc.lat1
+                        lng1 = calc.lng1
+                        lat2 = calc.lat2
+                        lng2 = calc.lng2
+                        settings.distanceUnits = calc.distanceUnits
+                        settings.bearingUnits = calc.bearingUnits
+                        history.selected = nil
+                    }
+                    doCalculations()
+                }
+                .textFieldStyle(SignedDecimalFieldStyle())
+                .toolbar {
+                    ToolbarItem(placement: .keyboard) {
+                        
+                        // minus toggle button
+                        Button {
+                            switch(focusedField) {
+                            case .lat1:
+                                if let l = lat1 {
+                                    lat1 = l * -1
+                                }
+                            case .lng1:
+                                if let l = lng1 {
+                                    lng1 = l * -1
+                                }
+                            case .lat2:
+                                if let l = lat2 {
+                                    lat2 = l * -1
+                                }
+                            case .lng2:
+                                if let l = lng2 {
+                                    lng2 = l * -1
+                                }
+                            default:
+                                break
+                            }
+                            
+                        } label: {
+                            Image(systemName: "minus.square")
+                        }
+                    }
+                    ToolbarItem(placement: .keyboard) {
+                        Spacer()
+                    }
+                    ToolbarItem(placement: .keyboard) {
+                        
+                        // keyboard dismiss button
+                        Button {
+                            focusedField = nil
+                        } label: {
+                            Image(systemName: "keyboard.chevron.compact.down")
+                        }
                     }
                 }
+                .padding()
             }
-            .padding()
-        }
-        .onTapGesture {
-            print("Tap")
-            focusedField = nil
-        }
-        .sheet(isPresented: $settingsSheetShown) {
-            focusedField = nil
-            doCalculatations()
-        } content: {
-            SettingsSheet(settingsSheetShown: $settingsSheetShown)
+            .onTapGesture {
+                print("Tap")
+                focusedField = nil
+            }
+            .navigationTitle("Geo Calculator")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink("History", destination: HistoryScreen())
+                        .isDetailLink(false)
+                }
+    
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink("Settings", destination: SettingsScreen())
+                }
+            }
         }
     }
 
-    func doCalculatations()
+    func doCalculations()
     {
         guard let p1lt = lat1, let p1ln = lng1, let p2lt = lat2, let p2ln = lng2  else {
             return
@@ -162,12 +178,16 @@ struct ContentView: View {
         }
         bearingStr = "Bearing: \(bearing) \(settings.bearingUnits.rawValue)"
         
+        // store in history
+        history.history.append(Calculation(lat1: p1lt, lng1: p1ln, lat2: p2lt, lng2: p2ln, time: Date(), distanceUnits: settings.distanceUnits, bearingUnits: settings.bearingUnits))
+        
     }
 }
 
 #Preview {
     ContentView()
         .environmentObject(SettingsViewModel())
+        .environmentObject(HistoryViewModel())
 }
 
 

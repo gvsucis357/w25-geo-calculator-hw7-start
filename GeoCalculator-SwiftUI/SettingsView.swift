@@ -33,8 +33,6 @@ struct SettingsView: View {
                 }
             }
         }
-        //.scrollContentBackground(.hidden)
-        //.background(.gray)
     }
 }
 
