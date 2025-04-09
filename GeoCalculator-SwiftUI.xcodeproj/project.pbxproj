@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		9E57E3492D9336E700624B33 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 9E57E3482D9336E700624B33 /* FirebaseAnalytics */; };
+		9E57E34B2D9336E700624B33 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9E57E34A2D9336E700624B33 /* FirebaseCore */; };
+		9E57E34D2D9336E700624B33 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 9E57E34C2D9336E700624B33 /* FirebaseFirestore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		9E895D522D4C2AA500BFB6E9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +58,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9E57E34B2D9336E700624B33 /* FirebaseCore in Frameworks */,
+				9E57E3492D9336E700624B33 /* FirebaseAnalytics in Frameworks */,
+				9E57E34D2D9336E700624B33 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +121,9 @@
 			);
 			name = "GeoCalculator-SwiftUI";
 			packageProductDependencies = (
+				9E57E3482D9336E700624B33 /* FirebaseAnalytics */,
+				9E57E34A2D9336E700624B33 /* FirebaseCore */,
+				9E57E34C2D9336E700624B33 /* FirebaseFirestore */,
 			);
 			productName = "GeoCalculator-SwiftUI";
 			productReference = 9E895D412D4C2A9D00BFB6E9 /* GeoCalculator-SwiftUI.app */;
@@ -195,6 +207,9 @@
 			);
 			mainGroup = 9E895D382D4C2A9D00BFB6E9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				9E57E3472D9336E700624B33 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9E895D422D4C2A9D00BFB6E9 /* Products */;
 			projectDirPath = "";
@@ -552,6 +567,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9E57E3472D9336E700624B33 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.10.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9E57E3482D9336E700624B33 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E57E3472D9336E700624B33 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		9E57E34A2D9336E700624B33 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E57E3472D9336E700624B33 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		9E57E34C2D9336E700624B33 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E57E3472D9336E700624B33 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9E895D392D4C2A9D00BFB6E9 /* Project object */;
 }

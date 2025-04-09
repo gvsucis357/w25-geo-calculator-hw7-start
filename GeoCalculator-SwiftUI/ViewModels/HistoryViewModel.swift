@@ -18,7 +18,12 @@ struct Calculation: Identifiable {
     var bearingUnits: BearingUnits
 }
 
+@MainActor
 class HistoryViewModel: ObservableObject {
     @Published var history: [Calculation] = []
     @Published var selected: Calculation? = nil
+    
+    func setHistory(history: [Calculation]) {
+        self.history = history
+    }
 }

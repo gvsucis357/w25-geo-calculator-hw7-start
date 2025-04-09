@@ -151,6 +151,14 @@ struct ContentView: View {
                     NavigationLink("Settings", destination: SettingsScreen())
                 }
             }
+            .onAppear() {
+                print("listening for firebase updates...")
+                listenForHistoryUpdates(vm: history)
+            }
+            .onDisappear() {
+                print("no longer listening for firebase updates...")
+                stopListeningForHistoryUpdates()
+            }
         }
     }
 
@@ -179,7 +187,10 @@ struct ContentView: View {
         bearingStr = "Bearing: \(bearing) \(settings.bearingUnits.rawValue)"
         
         // store in history
-        history.history.append(Calculation(lat1: p1lt, lng1: p1ln, lat2: p2lt, lng2: p2ln, time: Date(), distanceUnits: settings.distanceUnits, bearingUnits: settings.bearingUnits))
+//        history.history.append(Calculation(lat1: p1lt, lng1: p1ln, lat2: p2lt, lng2: p2ln, time: Date(), distanceUnits: settings.distanceUnits, bearingUnits: settings.bearingUnits))
+        Task {
+            await addHistory(calculation: Calculation(lat1: p1lt, lng1: p1ln, lat2: p2lt, lng2: p2ln, time: Date(), distanceUnits: settings.distanceUnits, bearingUnits: settings.bearingUnits))
+        }
         
     }
 }
